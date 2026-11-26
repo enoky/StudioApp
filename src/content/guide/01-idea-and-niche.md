@@ -24,9 +24,9 @@ Before you plan a business, decide what it's for. How many nights a week do you 
 
 A niche is a clear answer to "who books you, and why you?" Good niches are specific enough that the right people recognize themselves straight away:
 
-- "Release-ready vocals for independent hip-hop and R&B artists in the west end."
+- "Release-ready vocals for singer-songwriters across Lanark County, without driving to Ottawa."
 - "I record singer-songwriters live, in one room, in a day."
-- "Podcasts for Ontario law and accounting firms, recorded and edited for you."
+- "Podcasts for Perth-area businesses and nonprofits, recorded and edited for you."
 - "Rehearsal lockouts for working cover bands."
 
 Write yours with **no adjectives**. "Amazing", "professional" and "high-quality" say nothing a competitor can't also say. If you're tempted to use one, ask *why*, and use the answer instead.
@@ -39,9 +39,17 @@ Write yours with **no adjectives**. "Amazing", "professional" and "high-quality"
 
 ## Pick a who-where segment
 
-From *The Mom Test*: a useful segment is a **type of person plus a place you can reliably find them**. "Musicians in Toronto" fails. "Independent rappers releasing a single a month who go to the Tuesday open mic on Queen West" works, because you know where to show up on Tuesday.
+From *The Mom Test*: a useful segment is a **type of person plus a place you can reliably find them**. "Musicians in Lanark County" fails. "Folk and roots singer-songwriters who play open mics around Perth and want to release an EP" works, because you know where to find them this week.
 
 If conversations keep giving you contradicting answers, your segment is too broad. Narrow it.
+
+## Plan for a small-town market
+
+Perth is a small town, so the local pool of paying clients is smaller than in a city. Plan your reach from the start:
+
+- **Draw from the whole region:** Lanark County, Smiths Falls and Carleton Place, plus Ottawa and Kingston artists who would drive for a quieter setting, a lower rate or a specific sound.
+- **Add work that doesn't need clients in the room:** remote mixing and podcast editing let you serve clients anywhere.
+- **Serve local businesses:** downtown shops, tourism businesses and nonprofits are natural podcast and audio clients, and they're reachable through the local Chamber and BIA (see [Marketing](../marketing/)).
 
 ## Recording, podcast or both?
 

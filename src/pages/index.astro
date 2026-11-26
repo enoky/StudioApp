@@ -10,7 +10,7 @@ const stages = await getStages();
   <section class="hero wrap">
     <h1>Fill the calendar before you build the room.</h1>
     <p class="lead">
-      A free guide to launching a recording or podcast studio in Ontario. Work through 12 stages, tick off each checklist, and watch your week fill up.
+      A free guide to launching a recording or podcast studio in Perth, Ontario and Lanark County. Work through 12 stages, tick off each checklist, and watch your week fill up.
     </p>
     <WeekGrid stages={stages.map((s) => ({ id: s.id, order: s.order, short: s.short, total: s.total }))} />
     <div class="hero-actions">

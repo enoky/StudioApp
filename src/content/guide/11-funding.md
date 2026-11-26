@@ -6,12 +6,18 @@ summary: Bootstrap first, use loans only for things already earning, and know wh
 trap: Borrowing against your home or signing a personal guarantee to build a room nobody has booked yet. Funding doesn't validate an idea; customers do.
 nextMoves:
   - Build your startup budget and runway in the budget tool before you talk to any lender.
-  - Check whether you qualify for Futurpreneur (ages 18–39) and book a call to ask questions.
+  - Book a free consultation with the Small Business Advisory Centre and ask about the next Starter Company Plus intake.
   - Tell artist clients about FACTOR and Ontario Arts Council recording grants, which can help them pay for studio time.
 tools: [startup-budget, break-even]
 templates: []
 checked: November 2026
 sources:
+  - title: "Small Business Advisory Centre (Smiths Falls/Lanark County/North Leeds Grenville): Starter Company Plus"
+    url: https://smallbizcentre.ca/starter-company-plus/
+  - title: "Town of Perth: Starting or expanding a business"
+    url: https://perth.ca/do-business/starting-or-relocating-a-business
+  - title: "Town of Perth: Grants and funding opportunities"
+    url: https://www.perth.ca/business-development/starting-or-expanding-a-business/grants-and-funding-opportunities/
   - title: "Futurpreneur: Startup Program"
     url: https://futurpreneur.ca/en/
   - title: "Canada Small Business Financing Program"
@@ -37,6 +43,12 @@ The safest money is the money you don't borrow. Start lean, pre-sell, and let bo
 3. **Equipment you already own,** and renting time elsewhere instead of building.
 4. **Loans,** for proven demand only.
 5. **Grants,** a bonus, never the plan. They're competitive, slow and tied to specific activities.
+
+## Local help in Perth and Lanark County
+
+- **Small Business Advisory Centre (Smiths Falls/Lanark County/North Leeds Grenville).** Free, confidential advice for new and existing small businesses in Perth and across the region, including one-on-one consultations by appointment. The office is in Smiths Falls. It runs **Starter Company Plus**, an Ontario-funded program with training, mentorship and the chance to pitch for a **non-repayable grant of up to $5,000**, for businesses under five years old. It also runs **Summer Company** for students. Intakes open a few times a year, so ask when the next one is.
+- **Valley Heartland Community Futures Development Corporation.** A FedDev-funded organization that supports small businesses in small towns and rural communities. Ask what loans and advice they offer for equipment and startups.
+- **Town of Perth Community Improvement Plan (CIP).** Grants for property owners in the downtown CIP area, such as the Façade and Signage Improvement Program. Useful only if you lease or own a downtown building; check the CIP map.
 
 ## Loans and financing
 
@@ -71,6 +83,7 @@ Be wary of anyone who "guarantees" a grant or sponsorship for a fee, pay-to-play
 - [ ] I've pre-sold or taken deposits before borrowing anything
 - [ ] Any loan is for proven demand, and payments fit inside 30% of real revenue
 - [ ] I've avoided or capped personal guarantees, and nothing is secured against my home
-- [ ] I've checked my eligibility for Futurpreneur or the CSBFP
+- [ ] I've booked a free consultation with the Small Business Advisory Centre
+- [ ] I've checked my eligibility for Starter Company Plus, Futurpreneur or the CSBFP
 - [ ] I know the current OMIF streams and whether my business is eligible
 - [ ] I know the OAC and FACTOR programs my artist clients can use for studio time
