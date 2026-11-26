@@ -19,24 +19,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm test
-      - name: Read the Pages URL
-        id: pages
-        if: github.event_name != 'pull_request'
-        uses: actions/configure-pages@v5
       - name: Build
         run: npm run build
         env:
-          # Falls back to /StudioApp on pull requests, before Pages is set up.
-          BASE_PATH: ${{ steps.pages.outputs.base_path || '/StudioApp' }}
-          SITE_URL: ${{ steps.pages.outputs.origin || 'https://enoky.github.io' }}
-      - uses: actions/upload-pages-artifact@v3
+          # Project sites live at https://<owner>.github.io/<repo>/, so both come from the repo itself.
+          # This works before Pages is switched on, and in forks or renamed repos.
+          BASE_PATH: /${{ github.event.repository.name }}
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+      - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
         with:
           path: dist
@@ -49,5 +46,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Needs Settings → Pages → Source set to "GitHub Actions" (one-time).
       - id: deployment
         uses: actions/deploy-pages@v4
