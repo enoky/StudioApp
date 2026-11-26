@@ -1,0 +1,132 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+const suggestions = ['HST', 'lease', 'split sheet', 'deposit', 'zoning', 'podcast', 'FACTOR', 'WSIB'];
+---
+<Base title="Search" description="Search the Booked Solid guide, tools and paperwork." tab="search">
+  <div class="wrap page" data-index={url('search.json')}>
+    <h1>Search</h1>
+    <form role="search" class="search" onsubmit="return false">
+      <label for="q" class="visually-hidden">Search the guide</label>
+      <input id="q" type="search" placeholder="Try HST, lease or split sheet" autocomplete="off" enterkeyhint="search" />
+    </form>
+    <p class="small muted suggest">
+      Popular:
+      {suggestions.map((s) => <button type="button" class="chip" data-q={s}>{s}</button>)}
+    </p>
+    <p class="small muted" data-status aria-live="polite"></p>
+    <ol class="results" data-results></ol>
+  </div>
+</Base>
+
+<script>
+  type Item = { kind: string; title: string; url: string; summary: string; text: string };
+  const page = document.querySelector<HTMLElement>('[data-index]')!;
+  const input = document.querySelector<HTMLInputElement>('#q')!;
+  const list = document.querySelector<HTMLOListElement>('[data-results]')!;
+  const status = document.querySelector('[data-status]')!;
+  let items: Item[] = [];
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  function snippet(text: string, terms: string[]) {
+    const lower = text.toLowerCase();
+    let at = -1;
+    for (const t of terms) { at = lower.indexOf(t); if (at >= 0) break; }
+    if (at < 0) return '';
+    const start = Math.max(0, at - 60);
+    let s = (start > 0 ? '…' : '') + text.slice(start, at + 140) + '…';
+    s = esc(s);
+    for (const t of terms) s = s.replace(new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<mark>$1</mark>');
+    return s;
+  }
+
+  function search(q: string) {
+    const terms = q.toLowerCase().split(/\s+/).filter((t) => t.length > 1);
+    if (!terms.length) { list.innerHTML = ''; status.textContent = ''; return; }
+    const scored = items
+      .map((it) => {
+        const title = it.title.toLowerCase(), sum = it.summary.toLowerCase(), text = it.text.toLowerCase();
+        let score = 0;
+        for (const t of terms) {
+          const inAny = title.includes(t) || sum.includes(t) || text.includes(t);
+          if (!inAny) return { it, score: 0 };
+          if (title.includes(t)) score += 10;
+          if (sum.includes(t)) score += 4;
+          score += Math.min(text.split(t).length - 1, 10);
+        }
+        return { it, score };
+      })
+      .filter((r) => r.score > 0)
+      .sort((a, b) => b.score - a.score);
+    status.textContent = scored.length ? `${scored.length} result${scored.length === 1 ? '' : 's'} for "${q}"` : `Nothing found for "${q}". Try a shorter word, like "lease" or "tax".`;
+    list.innerHTML = scored
+      .map(({ it }) => `<li><a href="${it.url}"><span class="kind small">${esc(it.kind)}</span><strong>${esc(it.title)}</strong><span class="snip">${snippet(it.text, terms) || esc(it.summary)}</span></a></li>`)
+      .join('');
+  }
+
+  fetch(page.dataset.index!)
+    .then((r) => r.json())
+    .then((data) => {
+      items = data;
+      const q = new URLSearchParams(location.search).get('q');
+      if (q) { input.value = q; search(q); }
+    })
+    .catch(() => { status.textContent = "Search couldn't load. Check your connection and reload the page."; });
+
+  input.addEventListener('input', () => {
+    search(input.value);
+    const u = new URL(location.href);
+    if (input.value) u.searchParams.set('q', input.value); else u.searchParams.delete('q');
+    history.replaceState(null, '', u);
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-q]').forEach((b) =>
+    b.addEventListener('click', () => { input.value = b.dataset.q!; input.dispatchEvent(new Event('input')); input.focus(); })
+  );
+</script>
+
+<style>
+  .page { padding-top: var(--space-5); }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .search input {
+    width: 100%;
+    min-height: 52px;
+    font: inherit;
+    font-size: var(--step-1);
+    color: var(--ink);
+    background: var(--sheet);
+    border: 1.5px solid var(--rule-strong);
+    border-radius: var(--radius-control);
+    padding: 0 var(--space-4);
+  }
+  .search input:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 2px var(--focus); }
+  .suggest { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-3); }
+  .chip {
+    font: inherit;
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--sheet);
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: 0 var(--space-3);
+    min-height: 36px;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: var(--booked); color: var(--booked); }
+  .results { list-style: none; padding: 0; margin: var(--space-4) 0 0; }
+  .results :global(a) {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .results :global(strong) { font-family: var(--font-display); font-stretch: 88%; font-size: var(--step-1); }
+  .results :global(a:hover strong) { color: var(--booked); }
+  .results :global(.kind) { color: var(--ink-2); font-weight: 700; }
+  .results :global(.snip) { color: var(--ink-2); }
+  .results :global(mark) { background: var(--hold); color: var(--ink); border-radius: 2px; padding: 0 2px; }
+</style>

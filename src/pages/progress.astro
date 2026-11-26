@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import WeekGrid from '../components/WeekGrid.astro';
+import { getStages } from '../lib/stages';
+import { url } from '../lib/url';
+const stages = await getStages();
+const total = stages.reduce((a, s) => a + s.total, 0);
+---
+<Base title="Your progress" description="Your checklist progress across all 12 stages, saved on this device." tab="progress">
+  <div class="wrap page">
+    <h1>Your progress</h1>
+    <p class="lead" data-summary>You've ticked 0 of {total} checks.</p>
+    <WeekGrid stages={stages.map((s) => ({ id: s.id, order: s.order, short: s.short, total: s.total }))} />
+
+    <ul class="bars" data-total={total}>
+      {stages.map((s) => (
+        <li data-stage={s.id} data-total={s.total}>
+          <a href={url(`guide/${s.id}`)}>
+            <span class="row">
+              <span class="name">{s.order}. {s.short}</span>
+              <span class="count small num" data-count>0 / {s.total}</span>
+            </span>
+            <span class="bar" aria-hidden="true"><span class="fill" data-fill></span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <section class="manage">
+      <h2>Your data</h2>
+      <p class="muted">Progress is saved only in this browser on this device. Nothing is sent anywhere. Clearing your browser data, or using another device, starts fresh.</p>
+      <button type="button" class="btn ghost" data-clear>Clear all progress</button>
+      <p class="small muted" data-cleared aria-live="polite"></p>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { load, countFor, clearAll } from '../lib/progress.js';
+
+  let armed = false;
+  function paint() {
+    const state = load();
+    let ticked = 0;
+    document.querySelectorAll<HTMLElement>('.bars li').forEach((li) => {
+      const total = Number(li.dataset.total || 0);
+      const done = Math.min(countFor(li.dataset.stage || '', state), total);
+      ticked += done;
+      const c = li.querySelector('[data-count]');
+      if (c) c.textContent = `${done} / ${total}`;
+      const f = li.querySelector<HTMLElement>('[data-fill]');
+      if (f) f.style.width = total ? `${(done / total) * 100}%` : '0';
+    });
+    const all = Number(document.querySelector<HTMLElement>('.bars')?.dataset.total || 0);
+    const s = document.querySelector('[data-summary]');
+    if (s) s.textContent = ticked === 0 ? `You haven't ticked anything yet. Start with stage 1 and work through the checklists.` : `You've ticked ${ticked} of ${all} checks.`;
+  }
+  paint();
+  window.addEventListener('pageshow', paint);
+
+  const btn = document.querySelector<HTMLButtonElement>('[data-clear]');
+  const msg = document.querySelector('[data-cleared]');
+  btn?.addEventListener('click', () => {
+    if (!armed) {
+      armed = true;
+      btn.textContent = 'Tap again to clear everything';
+      if (msg) msg.textContent = "This can't be undone.";
+      setTimeout(() => { armed = false; btn.textContent = 'Clear all progress'; if (msg) msg.textContent = ''; }, 5000);
+      return;
+    }
+    clearAll();
+    armed = false;
+    btn.textContent = 'Clear all progress';
+    if (msg) msg.textContent = 'Progress cleared.';
+    paint();
+    window.dispatchEvent(new Event('bs-progress'));
+  });
+</script>
+
+<style>
+  .page { padding-top: var(--space-5); }
+  .lead { font-size: var(--step-1); color: var(--ink-2); }
+  .bars { list-style: none; padding: 0; margin: var(--space-5) 0 0; }
+  .bars a { display: block; padding: var(--space-3) 0; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .name { font-weight: 700; }
+  .count { color: var(--ink-2); font-weight: 700; }
+  .bar { display: block; height: 10px; border-radius: 3px; background: var(--rule); overflow: hidden; }
+  .fill { display: block; height: 100%; width: 0; background: var(--booked); transition: width 0.4s ease; }
+  .manage h2 { font-size: var(--step-2); }
+</style>

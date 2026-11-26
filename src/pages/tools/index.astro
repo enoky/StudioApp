@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import { url, tools } from '../../lib/url';
+---
+<Base title="Tools" description="Calculators for studio founders: break-even, lease test, podcast money, gear payback and startup runway." tab="tools">
+  <div class="wrap page">
+    <h1>Tools</h1>
+    <p class="lead">Turn ideas into numbers before you spend. Each tool shows its working, and your inputs stay on this device.</p>
+    <ul class="list">
+      {tools.map((t) => (
+        <li>
+          <a href={url(`tools/${t.slug}`)}>
+            <strong>{t.title}</strong>
+            <span class="muted">{t.blurb}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .page { padding-top: var(--space-5); }
+  .lead { font-size: var(--step-1); color: var(--ink-2); line-height: 1.5; }
+  .list { list-style: none; padding: 0; margin: var(--space-5) 0 0; display: grid; gap: var(--space-3); }
+  .list a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-4);
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-left: 6px solid var(--booked);
+    border-radius: var(--radius-block);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .list strong { font-family: var(--font-display); font-stretch: 88%; font-size: var(--step-1); }
+  .list a:hover { border-color: var(--booked); }
+</style>

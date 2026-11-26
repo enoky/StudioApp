@@ -1,0 +1,81 @@
+---
+import Tool from '../../layouts/Tool.astro';
+import Field from '../../components/Field.astro';
+import { url } from '../../lib/url';
+---
+<Tool slug="gear-payback" title="Gear payback" description="How many months a purchase or build-out takes to pay for itself, and how much to save toward it.">
+  <Fragment slot="inputs">
+    <fieldset>
+      <legend>The purchase</legend>
+      <Field id="cost" label="Total cost" value={60000} prefix="$" step={100} hint="Include installation, permits and anything else it takes to use it." />
+      <Field id="extraHours" label="Extra booked hours per month it wins" value={40} suffix="h" hint="Hours you couldn't sell without it. If you can't name the clients, it's a hobby purchase." />
+      <Field id="rate" label="Effective hourly rate for those hours" value={60} prefix="$" />
+      <Field id="extraCosts" label="Extra monthly costs it adds" value={0} prefix="$" hint="Maintenance, power, financing payments, engineer time." />
+    </fieldset>
+    <fieldset>
+      <legend>Timing</legend>
+      <Field id="leaseMonthsLeft" label="Months left on your lease" value={36} suffix="mo" hint="Build-outs usually stay with the landlord. Use 0 if it doesn't matter." />
+      <Field id="saveMonths" label="Months until you want to buy" value={12} suffix="mo" />
+    </fieldset>
+  </Fragment>
+
+  <Fragment slot="results">
+    <div class="out" data-verdict>
+      <h2>Payback</h2>
+      <p class="big"><span data-out="months"></span></p>
+      <p class="muted" data-out="verdict"></p>
+    </div>
+    <div class="out">
+      <h2>Extra profit it brings in</h2>
+      <p class="big"><span data-out="profit"></span> a month</p>
+      <p class="muted"><span data-out="revenue"></span> in extra revenue, minus <span data-out="costs"></span> in extra costs.</p>
+    </div>
+    <div class="out">
+      <h2>Save for it first</h2>
+      <p class="big"><span data-out="transfer"></span> twice a month</p>
+      <p class="muted">Move this into a separate equipment account on the 10th and 25th, and you'll have the money when you planned to buy.</p>
+    </div>
+    <details>
+      <summary>Show the working</summary>
+      <div class="working">
+        <p>Extra profit = extra hours × rate − extra monthly costs.</p>
+        <p>Payback months = cost ÷ extra profit.</p>
+        <p>Savings transfer = cost ÷ months until purchase ÷ 2.</p>
+      </div>
+    </details>
+  </Fragment>
+
+  <section class="explain">
+    <h2>What to do with this</h2>
+    <p>Pre-sell the hours a purchase is meant to win before you buy it. See <a href={url('guide/gear')}>Gear</a> for what to buy first.</p>
+  </section>
+</Tool>
+
+<script>
+  import { gearPayback } from '../../lib/calc.js';
+  import { bindTool, set, money, hours } from '../../lib/toolform.js';
+
+  bindTool('gear-payback', (v, root) => {
+    const r = gearPayback(v);
+    set(root, 'months', r.months === null ? 'Never' : `${hours(r.months, 1)} months`);
+    set(root, 'profit', money(r.extraProfit));
+    set(root, 'revenue', money(r.extraRevenue));
+    set(root, 'costs', money(v.extraCosts));
+    set(root, 'transfer', r.perTransfer === null ? '–' : money(r.perTransfer));
+    let verdict = '';
+    if (r.months === null) verdict = "It doesn't bring in more than it costs to run, so it never pays for itself as a business purchase.";
+    else if (r.paysBackInLease === false) verdict = `It pays back after your lease ends (${hours(v.leaseMonthsLeft)} months). Risky if the improvements stay with the landlord.`;
+    else if (r.paysBackInLease === true) verdict = 'It pays back before your lease ends, if those extra hours really happen.';
+    else verdict = 'Make sure those extra hours are pre-sold, not hoped for.';
+    set(root, 'verdict', verdict);
+    const el = root.querySelector('[data-verdict]');
+    const ok = r.months !== null && r.paysBackInLease !== false;
+    el?.classList.toggle('good', ok);
+    el?.classList.toggle('warn', !ok);
+  });
+</script>
+
+<style>
+  .explain { margin-top: var(--space-6); max-width: var(--measure); }
+  .explain h2 { font-size: var(--step-2); margin-top: 0; }
+</style>

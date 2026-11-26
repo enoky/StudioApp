@@ -1,0 +1,19 @@
+{
+  "name": "booked-solid",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Booked Solid: a mobile-first guide to launching a recording or podcast studio in Ontario.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "node --test tests/*.test.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "astro": "^7.4.13"
+  }
+}

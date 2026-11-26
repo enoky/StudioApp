@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+<Base title="About this guide" description="What Booked Solid is, where its ideas come from, and its limits.">
+  <div class="wrap page prose">
+    <h1>About this guide</h1>
+    <p class="lead">Booked Solid is a free, practical guide for people launching a recording or podcast studio in Ontario. It's written for first-time founders: bedroom producers going pro, engineers opening a room, and podcasters starting a studio.</p>
+
+    <h2>The idea behind it</h2>
+    <p>Gear doesn't make a studio business; bookings do. Most studios close because of empty calendars and heavy leases, not bad acoustics. So the guide puts validation, cash and paperwork before build-outs and gear, and uses gates to tell you when you've earned the next step.</p>
+
+    <h2>Where the ideas come from</h2>
+    <p>The frameworks are paraphrased and adapted for studios from these books. Read them for the full picture:</p>
+    <ul>
+      <li>Rob Fitzpatrick, <cite>The Mom Test</cite></li>
+      <li>Michael E. Gerber, <cite>The E-Myth Revisited</cite></li>
+      <li>Mike Michalowicz, <cite>Profit First</cite></li>
+      <li>Rod Gervais, <cite>Home Recording Studio: Build It Like the Pros</cite></li>
+      <li>Mike Senior, <cite>Mixing Secrets for the Small Studio</cite></li>
+      <li>Donald S. Passman, <cite>All You Need to Know About the Music Business</cite></li>
+      <li>Chris Voss with Tahl Raz, <cite>Never Split the Difference</cite></li>
+      <li>Eric Nuzum, <cite>Make Noise</cite></li>
+      <li>Glen Weldon, <cite>NPR's Podcast Start Up Guide</cite></li>
+      <li>Howard Massey, <cite>Behind the Glass, Volume II</cite></li>
+      <li>Austin Kleon, <cite>Show Your Work!</cite></li>
+    </ul>
+    <p>Ontario and Canadian facts (HST, business registration, WSIB, minimum wage, zoning, noise, funding programs and collection societies) were checked against official sources in November 2026. Each stage lists its sources.</p>
+
+    <h2>Its limits</h2>
+    <ul>
+      <li>It's general information, not legal, tax or financial advice. Talk to an Ontario entertainment lawyer and an accountant before you sign or file anything.</li>
+      <li>Rates, rules, thresholds and grant programs change. Check the linked source before you act.</li>
+      <li>Worked numbers and calculator defaults are estimates for illustration. Replace them with your own.</li>
+      <li>Toronto is used as the worked example for zoning and noise. Other Ontario municipalities have their own bylaws.</li>
+    </ul>
+
+    <h2>Your privacy</h2>
+    <p>There are no accounts, ads or trackers. Your checklist ticks and calculator inputs are saved only in your browser on this device. You can clear them on the <a href={url('progress')}>Progress</a> page.</p>
+
+    <h2>Use it offline</h2>
+    <p>Once you've opened the guide, it works without a connection. On a phone, use your browser's "Add to Home Screen" or "Install" option to keep it like an app.</p>
+  </div>
+</Base>
+
+<style>
+  .page { padding-top: var(--space-5); }
+  .lead { font-size: var(--step-1); color: var(--ink-2); line-height: 1.5; }
+</style>

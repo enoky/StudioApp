@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+const templates = (await getCollection('templates')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Paperwork" description="Printable starting points for a split sheet, podcast guest release, session intake form and booking policy." tab="templates">
+  <div class="wrap page">
+    <h1>Paperwork</h1>
+    <p class="lead">Do the paperwork before the session, not after. Print these or save them as PDFs, then adapt them to your studio.</p>
+    <p class="warn small">These are starting points, not legal advice. Have an Ontario lawyer review them before you rely on them.</p>
+    <ul class="list">
+      {templates.map((t) => (
+        <li>
+          <a href={url(`templates/${t.id}`)}>
+            <strong>{t.data.title}</strong>
+            <span class="muted">{t.data.summary}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .page { padding-top: var(--space-5); }
+  .lead { font-size: var(--step-1); color: var(--ink-2); line-height: 1.5; }
+  .warn { background: var(--trap-bg); border-left: 6px solid var(--trap-line); padding: var(--space-3) var(--space-4); border-radius: var(--radius-block); }
+  .list { list-style: none; padding: 0; margin: var(--space-5) 0 0; display: grid; gap: var(--space-3); }
+  .list a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-4);
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-block);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .list strong { font-family: var(--font-display); font-stretch: 88%; font-size: var(--step-1); }
+  .list a:hover { border-color: var(--booked); }
+</style>

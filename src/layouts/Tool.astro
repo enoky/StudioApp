@@ -1,0 +1,68 @@
+---
+import Base from './Base.astro';
+import { url } from '../lib/url';
+
+interface Props { title: string; description: string; slug: string }
+const { title, description, slug } = Astro.props;
+---
+<Base title={title} description={description} tab="tools">
+  <div class="wrap tool" data-tool={slug}>
+    <p class="crumb small"><a href={url('tools')}>Tools</a></p>
+    <h1>{title}</h1>
+    <p class="lead">{description}</p>
+    <p class="note small">All figures are in Canadian dollars before HST. Every default is an editable estimate, so replace it with your own numbers. Your inputs are saved on this device.</p>
+    <div class="tool-grid">
+      <form class="inputs" onsubmit="return false" aria-label="Your numbers">
+        <slot name="inputs" />
+        <button type="button" class="reset btn ghost" data-reset>Reset to example numbers</button>
+      </form>
+      <section class="results" aria-label="Results" aria-live="polite">
+        <slot name="results" />
+      </section>
+    </div>
+    <slot />
+  </div>
+</Base>
+
+<style>
+  .tool { padding-top: var(--space-5); }
+  .crumb a { color: var(--ink-2); }
+  .lead { font-size: var(--step-1); color: var(--ink-2); line-height: 1.5; }
+  .note { background: var(--hold); border-radius: var(--radius-block); padding: var(--space-3) var(--space-4); }
+  .tool-grid { display: grid; gap: var(--space-5); margin-top: var(--space-5); }
+  .reset { width: 100%; margin-top: var(--space-2); }
+  @media (min-width: 52rem) {
+    .tool { max-width: 60rem; }
+    .tool-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+    .results { position: sticky; top: 4.5rem; }
+  }
+</style>
+
+<style is:global>
+  .results .out {
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-control);
+    padding: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+  .results .out h2 { font-size: var(--step-1); margin: 0 0 var(--space-2); font-stretch: 90%; }
+  .results .big {
+    font-family: var(--font-display);
+    font-stretch: 80%;
+    font-weight: 760;
+    font-size: var(--step-3);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 var(--space-1);
+  }
+  .results .out p:last-child { margin-bottom: 0; }
+  .results .out.good { border-left: 6px solid var(--booked); }
+  .results .out.warn { border-left: 6px solid var(--trap-line); background: var(--trap-bg); }
+  .results details { margin-top: var(--space-3); }
+  .results summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+  .results .working { font-size: var(--step--1); color: var(--ink-2); }
+  .results .working p { margin-bottom: var(--space-2); }
+  fieldset { border: 0; padding: 0; margin: 0 0 var(--space-4); }
+  legend { font-family: var(--font-display); font-stretch: 88%; font-weight: 700; font-size: var(--step-1); margin-bottom: var(--space-3); padding: 0; }
+</style>
