@@ -11,8 +11,8 @@ interface Props {
   description?: string;
   tab?: 'guide' | 'tools' | 'templates' | 'progress' | 'search' | 'none';
 }
-const { title, description = 'A free, practical guide to launching a recording or podcast studio in Ontario.', tab = 'none' } = Astro.props;
-const fullTitle = title === 'Booked Solid' ? 'Booked Solid: launch a recording or podcast studio in Ontario' : `${title} | Booked Solid`;
+const { title, description = 'A free, practical guide to launching a recording or podcast studio in Perth, Ontario and Lanark County.', tab = 'none' } = Astro.props;
+const fullTitle = title === 'Booked Solid' ? 'Booked Solid: launch a recording or podcast studio in Perth, Ontario' : `${title} | Booked Solid`;
 
 const tabs = [
   { id: 'guide', label: 'Guide', href: url(''), icon: 'M4 5h16v15H4zM4 9h16M9 3v4M15 3v4M7 12.5h4v3H7z' },

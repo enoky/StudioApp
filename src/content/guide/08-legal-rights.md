@@ -34,6 +34,8 @@ This stage has two halves: setting up your own business properly, and making sur
 
 ## Your business in Ontario
 
+**Free local help.** The Small Business Advisory Centre for Lanark County offers free one-on-one consultations and can point you through registration (see [Funding](../funding/)).
+
 **Structure.** Most studios start as a **sole proprietorship** (simple and cheap; income goes on your personal tax return) or a **partnership** with a written partnership agreement. Incorporating, provincially or federally, can limit personal liability and change how you're taxed, but it costs more to set up and run. Ask an accountant which fits your income and risk.
 
 **Business name.** If you operate under a name that isn't your own legal name, you must register it through the **Ontario Business Registry**. Registering a sole proprietorship or general partnership costs **$60**.

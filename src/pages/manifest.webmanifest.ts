@@ -3,9 +3,9 @@ import { url } from '../lib/url';
 
 export const GET: APIRoute = () => {
   const manifest = {
-    name: 'Booked Solid: launch a recording or podcast studio in Ontario',
+    name: 'Booked Solid: launch a recording or podcast studio in Perth, Ontario',
     short_name: 'Booked Solid',
-    description: 'A free, practical guide to launching a recording or podcast studio in Ontario.',
+    description: 'A free, practical guide to launching a recording or podcast studio in Perth, Ontario and Lanark County.',
     id: url(''),
     start_url: url(''),
     scope: url(''),

@@ -6,18 +6,20 @@ summary: Start in the space you have or rent by the hour. Before any lease, chec
 trap: Signing a long lease with a personal guarantee before bookings are proven. It's a one-way door, and build-out money stays with the landlord.
 nextMoves:
   - Run the lease test on any space you're considering before you visit it twice.
-  - Check zoning and the noise bylaw for that exact address with the City, in writing.
+  - Check zoning for that exact address with the Town of Perth (or your township) in writing, before you sign or invite clients.
   - Ask the landlord about after-hours access, acoustic work and restoration clauses before you talk about rent.
 tools: [break-even, gear-payback]
 templates: []
 checked: November 2026
 sources:
-  - title: "City of Toronto: Noise bylaw (Municipal Code Chapter 591)"
-    url: https://www.toronto.ca/city-government/public-notices-bylaws/bylaw-enforcement/noise/
-  - title: "City of Toronto: By-law 1508-2025, home occupation permissions"
-    url: https://www.toronto.ca/legdocs/bylaws/2025/law1508.pdf
-  - title: "City of Toronto Zoning By-law 569-2013, Section 150.5 home occupations"
-    url: https://www.toronto.ca/zoning/bylaw_amendments/ZBL_NewProvision_Chapter150.htm
+  - title: "Town of Perth: Zoning By-law No. 5276 (in effect September 17, 2026)"
+    url: https://media-002-ca.cdn.govstack.com/perth-009-ca/media/a0hnot3k/2026-5276-regulate-the-use-of-land-buildings-structures-within-town-of-perth-zoning-by-law-20aug2026.pdf
+  - title: "Town of Perth: Zoning By-law update and zoning map"
+    url: https://www.perth.ca/business-development/planning-and-development/zoning-by-law-update/
+  - title: "Town of Perth: Noise By-law No. 2137 (office consolidation)"
+    url: https://www.perth.ca/media/3uyhi4i1/noise-bylaw.pdf
+  - title: "Tay Valley Township: Zoning and home-based businesses"
+    url: https://www.tayvalleytwp.ca/living-here/building/planning-and-development/zoning/
 ---
 
 The most expensive mistake in this business is a space that's too big, too early. Use what you have, rent by the hour, and upgrade only when bookings force you to.
@@ -31,19 +33,28 @@ The most expensive mistake in this business is a space that's too big, too early
 | Shared or co-op space | Monthly share | Medium | Splitting rent with other engineers |
 | Commercial lease | Deposit, build-out, legal | High: long-term and often personally guaranteed | Proven, steady bookings |
 
-## Home studios in Toronto (worked example)
+## First, check which municipality you're in
 
-Toronto regulates home businesses as **home occupations** in Zoning By-law 569-2013, and updated the rules with By-law 1508-2025. Under the current rules:
+A Perth mailing address doesn't always mean the Town of Perth. Many rural addresses around town are in **Tay Valley Township** or **Drummond/North Elmsley Township**, which have their own zoning bylaws and home-business rules. Check your property tax bill, or ask the Town, before you read any of the rules below.
 
-- A home occupation may have **two employees** working in the dwelling, in addition to the operator.
-- Some home occupations can't have clients attend. Exceptions include education uses and **artist studios**, among others.
-- Music instruction as a home occupation is only allowed in a **detached house or a detached ancillary building**.
+## Home studios in the Town of Perth
 
-Whether a recording or podcast studio counts as an artist studio, a production studio or something else isn't spelled out for every case. **Ask City of Toronto zoning staff about your exact use and address before you invite clients in.** Other Ontario cities have their own zoning bylaws, so check with yours.
+Perth's new **Zoning By-law No. 5276** took effect on September 17, 2026. Home businesses are called **home based businesses** (section 4.18), and they're permitted in the Residential First Density (R1) and Residential Medium Density (R4) zones. Under section 4.18:
+
+- **Permitted types include "a studio"** and instructional services such as music lessons (limited to **five pupils**). The bylaw defines a studio as a place for teaching art or music, or an artist's workplace.
+- **Size:** the business can use no more than **25% of the home's floor area, or 47 m² (about 506 sq ft)**, whichever is smaller.
+- **Accessory buildings** (a garage or backyard studio) need approval from the Committee of Adjustment.
+- **Staff:** up to **two non-resident employees** on site.
+- **Hours:** no clients or deliveries **between 9 p.m. and 7 a.m.**, and hours must follow the noise bylaw. That rules out late-night client sessions at home.
+- **Nuisance:** the business can't become a public nuisance through noise, traffic or parking, and its equipment can't cause noise impacts on neighbours.
+- **Parking:** required parking must be on site, not on the front lawn, before you start.
+- **Paperwork:** proof of current permits and licences is filed with the Town every year, renewed by the last business day of January.
+
+**The catch for recording:** the bylaw defines sound recording studios separately, as an **Audio/Visual Studio**, and that use isn't on the home based business list. It's permitted in the **General Commercial (C1)** and **Highway Commercial (C2)** zones. So whether you can run a client-facing recording or podcast studio from home is a question for the Town's planning staff. **Describe exactly what you'll do (recording, mixing, podcasts, lessons) and get their answer in writing before you invite clients in.** Mixing and editing for remote clients, with nobody visiting, is the lowest-risk home setup. If you outgrow home, C1 and C2 are where a commercial room is allowed without a rezoning, so check the zoning map before you view a unit twice.
 
 ## Noise rules
 
-Toronto's noise bylaw (Chapter 591) covers **amplified sound or instrument sound**, measured where a neighbour hears it, including inside their home. Set fines for exceeding the limit are $500. Late-night sessions are the classic trigger for complaints. Other municipalities have their own bylaws.
+Perth's noise bylaw (No. 2137) doesn't set decibel limits. It prohibits playing any musical instrument or sound equipment in a way that disturbs the peace of people in nearby homes. The set fine is modest, but complaints are what matter: they can end a home studio's welcome with neighbours, and they count against the "no public nuisance" rule in the zoning bylaw. Track at reasonable hours, keep doors and windows shut, and talk to your neighbours before you start.
 
 ## Isolation vs treatment
 
@@ -70,8 +81,10 @@ Isolation basics if you do build: mass, airtight seals, decoupling from the buil
 
 - [ ] I've chosen the cheapest space option that can serve my first 10 clients
 - [ ] I've run the lease test on any space I'm considering
-- [ ] I've confirmed zoning for my use and address with the City
-- [ ] I've read my municipality's noise bylaw and planned session hours around it
+- [ ] I've confirmed which municipality my address is in (Town of Perth, Tay Valley or Drummond/North Elmsley)
+- [ ] I've confirmed zoning for my use and address with the Town or township in writing
+- [ ] If I work from home in the Town of Perth, client sessions end by 9 p.m.
+- [ ] I've read the noise bylaw and talked to my neighbours
 - [ ] I've decided whether I need isolation or just treatment for my model
 - [ ] I have landlord consent in writing for any acoustic or electrical work
 - [ ] I understand the restoration clause and have avoided or capped any personal guarantee

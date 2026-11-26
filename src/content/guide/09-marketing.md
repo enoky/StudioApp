@@ -7,11 +7,13 @@ trap: Spending on ads, branding or a fancy logo before you have credits and test
 nextMoves:
   - Register a domain and publish a one-page site with your rate card, a booking link and an email sign-up.
   - Add a content and privacy clause to your booking terms so you can share approved session clips.
-  - Go to two local shows or meetups this week and talk to people about their work, not yours.
+  - Go to two local shows or meetups this week, and join the Perth & District Chamber of Commerce if local businesses are part of your market.
 tools: []
 templates: [session-intake]
 checked: November 2026
-sources: []
+sources:
+  - title: "Town of Perth: Business associations and supports"
+    url: https://www.perth.ca/business-development/starting-or-expanding-a-business/business-associations-and-supports/
 ---
 
 Most bookings come from people who already know you, or who know someone who does. Your job is to make great sessions, make that work visible, and be easy to book.
@@ -43,6 +45,12 @@ Austin Kleon's *Show Your Work!* fits a studio unusually well, because every ses
 - Promote other local artists and studios. Be the person who connects people.
 - Host a listening night or open house in your room.
 - Partner with venues, music schools, college programs and local businesses that need podcasts.
+
+## Local channels around Perth
+
+- **Perth & District Chamber of Commerce** and the **Downtown Heritage Perth BIA**, which represents more than 150 downtown businesses. They're the shortest route to local business owners who might want a podcast, ads or audio for their website.
+- **Local venues, festivals, music teachers and schools.** Offer demo days, student rates or recordings of live sets.
+- **Lanark County and Ottawa music communities** online and in person. Some Ottawa artists will happily drive about an hour for the right room and rate.
 
 ## Make it easy to book
 

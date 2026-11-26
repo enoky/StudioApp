@@ -5,7 +5,7 @@ short: Pricing
 summary: Build a simple rate card around outcomes, take deposits, and write down your cancellation and revision policies before you need them.
 trap: Underpricing and free "quick fixes". Every discount and unpaid revision lowers your effective hourly rate until busy months still lose money.
 nextMoves:
-  - Collect five local studio rate cards and note what each one includes, so you price on value, not guesswork.
+  - Collect five rate cards from studios in Lanark County, Ottawa and Kingston, and note what each one includes, so you price on value, not guesswork.
   - Write a one-page rate card with three packages and a deposit rule.
   - Adapt the booking policy template and send it with every confirmation.
 tools: [break-even]
@@ -18,7 +18,7 @@ Clients don't buy hours. They buy a radio-ready single, a finished episode, or a
 
 ## Find the market rate
 
-Don't guess and don't copy one competitor. Collect five or more current rate cards from studios in your area and note what's included: engineer, mixing, revisions, file delivery, parking. Then place yourself deliberately. Lower than average needs a reason (you're new and building credits). Higher needs proof (credits, a great room, before-and-after audio).
+Don't guess and don't copy one competitor. Collect five or more current rate cards from studios your clients could choose instead: around Perth, Smiths Falls and Carleton Place, and in Ottawa and Kingston. Note what's included: engineer, mixing, revisions, file delivery, parking. City studios often charge more but cost clients a long drive, which is part of your pitch. Then place yourself deliberately. Lower than average needs a reason (you're new and building credits). Higher needs proof (credits, a great room, before-and-after audio).
 
 ## A simple rate card
 

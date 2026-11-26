@@ -1,6 +1,6 @@
 # Booked Solid
 
-A free, mobile-first guide to launching a recording or podcast studio in Ontario.
+A free, mobile-first guide to launching a recording or podcast studio in Perth, Ontario and Lanark County.
 
 **Live site (once Pages is switched on):** https://enoky.github.io/StudioApp/
 
@@ -63,7 +63,7 @@ The number at the start of a file name (`03-money.md`) only sets the file order.
 
 ## Keeping facts current
 
-Ontario and Canadian facts were checked against official sources in November 2026: the HST small-supplier threshold, Ontario business name registration, WSIB registration, minimum wage, Toronto home occupation zoning and the noise bylaw, Futurpreneur and the CSBFP, Ontario Creates' Music Investment Fund, Ontario Arts Council and FACTOR programs, Canada Council, and the collection societies (including SOCAN's 2026 acquisition of CMRRA). Rates and programs change every year, so review each stage's `sources` and update `checked` when you do.
+Ontario and Canadian facts were checked against official sources in November 2026: the HST small-supplier threshold, Ontario business name registration, WSIB registration, minimum wage, the Town of Perth's Zoning By-law No. 5276 (home based businesses and studio zones) and Noise By-law No. 2137, local support (the Small Business Advisory Centre, Starter Company Plus, Valley Heartland CFDC, the Perth CIP), Futurpreneur and the CSBFP, Ontario Creates' Music Investment Fund, Ontario Arts Council and FACTOR programs, Canada Council, and the collection societies (including SOCAN's 2026 acquisition of CMRRA). Rates and programs change every year, so review each stage's `sources` and update `checked` when you do.
 
 ## How it's built
 
