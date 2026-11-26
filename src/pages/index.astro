@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import WeekGrid from '../components/WeekGrid.astro';
+import { getStages } from '../lib/stages';
+import { url, tools, smart } from '../lib/url';
+
+const stages = await getStages();
+---
+<Base title="Booked Solid" tab="guide">
+  <section class="hero wrap">
+    <h1>Fill the calendar before you build the room.</h1>
+    <p class="lead">
+      A free guide to launching a recording or podcast studio in Ontario. Work through 12 stages, tick off each checklist, and watch your week fill up.
+    </p>
+    <WeekGrid stages={stages.map((s) => ({ id: s.id, order: s.order, short: s.short, total: s.total }))} />
+    <div class="hero-actions">
+      <a class="btn" href={url(`guide/${stages[0].id}`)} data-continue>Start with stage 1</a>
+      <button class="btn ghost" type="button" data-install hidden>Install the app</button>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="stages-h">
+    <h2 id="stages-h">The 12 stages</h2>
+    <p class="muted">Work through them in order. Each one ends with a gate: don't spend money on the next stage until you've passed it.</p>
+    <ol class="stages">
+      {stages.map((s) => (
+        <li>
+          <a href={url(`guide/${s.id}`)} class="stage" data-stage={s.id} data-total={s.total}>
+            <span class="stage-n num" aria-hidden="true">{s.order}</span>
+            <span class="stage-body">
+              <span class="stage-title">{s.title}</span>
+              <span class="stage-sum">{smart(s.summary)}</span>
+              <span class="stage-prog small num" data-prog>{s.total} checks</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="wrap" aria-labelledby="tools-h">
+    <h2 id="tools-h">Do the math with your own numbers</h2>
+    <ul class="tool-list">
+      {tools.map((t) => (
+        <li><a href={url(`tools/${t.slug}`)}><strong>{t.title}</strong><span class="muted">{t.blurb}</span></a></li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<script>
+  import { load, countFor } from '../lib/progress.js';
+  const state = load();
+  let next: HTMLAnchorElement | null = null;
+  let anyStarted = false;
+  document.querySelectorAll<HTMLAnchorElement>('a.stage').forEach((a) => {
+    const total = Number(a.dataset.total || 0);
+    const done = countFor(a.dataset.stage || '', state);
+    if (done > 0) anyStarted = true;
+    const prog = a.querySelector('[data-prog]');
+    if (prog) prog.textContent = done === 0 ? `${total} checks` : done >= total ? `All ${total} checks done` : `${done} of ${total} checks done`;
+    if (done >= total && total > 0) a.classList.add('is-done');
+    if (!next && done < total) next = a;
+  });
+  const cta = document.querySelector<HTMLAnchorElement>('[data-continue]');
+  if (cta && anyStarted && next) {
+    const n = (next as HTMLAnchorElement).querySelector('.stage-n')?.textContent;
+    cta.textContent = `Continue with stage ${n}`;
+    cta.href = (next as HTMLAnchorElement).href;
+  }
+
+  // Offer installation where the browser supports it.
+  let deferred: any = null;
+  const installBtn = document.querySelector<HTMLButtonElement>('[data-install]');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferred = e;
+    if (installBtn) installBtn.hidden = false;
+  });
+  installBtn?.addEventListener('click', async () => {
+    if (!deferred) return;
+    deferred.prompt();
+    await deferred.userChoice;
+    deferred = null;
+    installBtn.hidden = true;
+  });
+</script>
+
+<style>
+  .hero { padding-top: var(--space-6); }
+  .hero h1 { max-width: 14ch; }
+  .lead { font-size: var(--step-0); line-height: 1.55; color: var(--ink-2); margin-bottom: var(--space-5); max-width: 36rem; }
+  @media (min-width: 40rem) { .lead { font-size: var(--step-1); } }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+
+  .stages { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }
+  .stage {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .stage-n {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-block);
+    border: 1.5px dashed var(--rule-strong);
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+  .stage.is-done .stage-n { background: var(--booked); border: 1.5px solid var(--booked); color: var(--booked-ink); }
+  .stage-body { display: flex; flex-direction: column; gap: 2px; }
+  .stage-title { font-family: var(--font-display); font-stretch: 88%; font-weight: 700; font-size: var(--step-1); line-height: 1.2; }
+  .stage:hover .stage-title { color: var(--booked); }
+  .stage-sum { color: var(--ink-2); }
+  .stage-prog { color: var(--ink-2); font-weight: 700; margin-top: 2px; }
+
+  .tool-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+  .tool-list a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-4);
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-left: 6px solid var(--booked);
+    border-radius: var(--radius-block);
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .tool-list a:hover { border-color: var(--booked); }
+</style>

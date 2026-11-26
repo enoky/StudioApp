@@ -1,0 +1,76 @@
+---
+import Tool from '../../layouts/Tool.astro';
+import Field from '../../components/Field.astro';
+import { url } from '../../lib/url';
+---
+<Tool slug="podcast-money" title="Podcast money" description="What ad slots would really pay at a show's download numbers, compared with what a studio earns producing it.">
+  <Fragment slot="inputs">
+    <fieldset>
+      <legend>The show's ad income</legend>
+      <Field id="downloads" label="Downloads per episode" value={800} step={50} hint="Downloads in the first 30 days is the usual measure." />
+      <Field id="cpm" label="CPM (price per 1,000 downloads)" value={25} prefix="$" hint="An assumption. CPMs vary a lot by niche, ad type and network, so check current rates." />
+      <Field id="slots" label="Ad slots per episode" value={2} />
+      <Field id="networkCut" label="Network or marketplace cut" value={0} suffix="%" max={100} />
+      <Field id="episodesPerMonth" label="Episodes per month" value={4} />
+    </fieldset>
+    <fieldset>
+      <legend>Your production service</legend>
+      <Field id="hoursPerEpisode" label="Studio hours per episode" value={6} step={0.5} hint="Engineering, editing, mixing and publishing together." />
+      <Field id="rate" label="Effective hourly rate" value={75} prefix="$" />
+      <Field id="episodesPerWeek" label="Client episodes per week" value={1} step={0.5} />
+      <Field id="focusHoursPerWeek" label="Focused editing hours you have per week" value={20} suffix="h" hint="Plan focused work at about half your working hours." />
+    </fieldset>
+  </Fragment>
+
+  <Fragment slot="results">
+    <div class="out">
+      <h2>What ads pay the show</h2>
+      <p class="big"><span data-out="adEpisode"></span> per episode</p>
+      <p class="muted">About <span data-out="adMonth"></span> a month. At this size, a direct sponsor, memberships or using the show to sell the host's services usually pay more.</p>
+    </div>
+    <div class="out good">
+      <h2>What you earn producing it</h2>
+      <p class="big"><span data-out="prodEpisode"></span> per episode</p>
+      <p class="muted">About <span data-out="prodMonth"></span> a month for one client.</p>
+    </div>
+    <div class="out">
+      <h2>Your capacity</h2>
+      <p class="big"><span data-out="capClients"></span> clients</p>
+      <p class="muted">About <span data-out="capEpisodes"></span> episodes a month with your focused hours. Beyond that you need contract editors and an editing checklist.</p>
+    </div>
+    <details>
+      <summary>Show the working</summary>
+      <div class="working">
+        <p>Ad income per episode = downloads ÷ 1,000 × CPM × slots × (1 − network cut).</p>
+        <p>Production per episode = hours × rate. Monthly = per episode × episodes a week × 4.33.</p>
+        <p>Capacity = focused hours a week × 4.33 ÷ hours per episode.</p>
+      </div>
+    </details>
+  </Fragment>
+
+  <section class="explain">
+    <h2>What to do with this</h2>
+    <p>Sell finished episodes and retainers, not just room hire. See <a href={url('guide/podcast')}>Podcasts</a> for a service menu and the paperwork you need.</p>
+  </section>
+</Tool>
+
+<script>
+  import { podcastAds, productionRetainer } from '../../lib/calc.js';
+  import { bindTool, set, money, hours } from '../../lib/toolform.js';
+
+  bindTool('podcast-money', (v, root) => {
+    const ads = podcastAds({ ...v, networkCut: v.networkCut / 100 });
+    const prod = productionRetainer(v);
+    set(root, 'adEpisode', money(ads.perEpisode));
+    set(root, 'adMonth', money(ads.perMonth));
+    set(root, 'prodEpisode', money(prod.perEpisode));
+    set(root, 'prodMonth', money(prod.perClientMonth));
+    set(root, 'capEpisodes', hours(prod.capacityEpisodes));
+    set(root, 'capClients', hours(prod.capacityClients, 1));
+  });
+</script>
+
+<style>
+  .explain { margin-top: var(--space-6); max-width: var(--measure); }
+  .explain h2 { font-size: var(--step-2); margin-top: 0; }
+</style>

@@ -1,0 +1,233 @@
+---
+import Tool from '../../layouts/Tool.astro';
+import Field from '../../components/Field.astro';
+import { url } from '../../lib/url';
+
+// Example lean start in a home or project room. All amounts are estimates.
+const oneTime = [
+  ['Studio monitors and headphones', 2000],
+  ['Room treatment (DIY bass traps and panels)', 1200],
+  ['Interface and one excellent microphone', 1500],
+  ['Ontario business name registration', 60],
+  ['Lawyer review of booking terms and templates', 750],
+  ['Domain and website', 100],
+];
+const monthly = [
+  ['Rent (0 for a home studio)', 0],
+  ['Insurance (gear and liability)', 80],
+  ['Software and plugin subscriptions', 60],
+  ['Rented studio time for bigger sessions', 300],
+  ['Marketing', 100],
+  ['Bookkeeping', 50],
+];
+---
+<Tool slug="startup-budget" title="Startup budget and runway" description="Add up what it costs to start and to keep the doors open, and see how many months your cash lasts.">
+  <Fragment slot="inputs">
+    <fieldset>
+      <legend>One-time costs</legend>
+      <ul class="rows" data-rows="oneTime">
+        {oneTime.map(([name, amt]) => (
+          <li class="row">
+            <input class="row-name" type="text" value={name} aria-label="Item" />
+            <span class="row-amt"><span aria-hidden="true">$</span><input type="number" inputmode="decimal" min="0" value={amt} aria-label={`${name} amount`} /></span>
+            <button type="button" class="row-del" aria-label={`Remove ${name}`}>×</button>
+          </li>
+        ))}
+      </ul>
+      <button type="button" class="add" data-add="oneTime">Add a one-time cost</button>
+    </fieldset>
+    <fieldset>
+      <legend>Monthly costs</legend>
+      <ul class="rows" data-rows="monthly">
+        {monthly.map(([name, amt]) => (
+          <li class="row">
+            <input class="row-name" type="text" value={name} aria-label="Item" />
+            <span class="row-amt"><span aria-hidden="true">$</span><input type="number" inputmode="decimal" min="0" value={amt} aria-label={`${name} amount`} /></span>
+            <button type="button" class="row-del" aria-label={`Remove ${name}`}>×</button>
+          </li>
+        ))}
+      </ul>
+      <button type="button" class="add" data-add="monthly">Add a monthly cost</button>
+    </fieldset>
+    <fieldset>
+      <legend>Your cash</legend>
+      <Field id="cash" label="Cash you can put in (and afford to lose)" value={8000} prefix="$" step={100} />
+      <Field id="monthlyRevenue" label="Revenue you expect per month, early on" value={300} prefix="$" step={50} hint="Be conservative. Base it on deposits and bookings you already have." />
+    </fieldset>
+  </Fragment>
+
+  <Fragment slot="results">
+    <div class="out">
+      <h2>To get started</h2>
+      <p class="big" data-out="oneTime"></p>
+      <p class="muted">One-time costs. You'd have <span data-out="left"></span> left afterwards.</p>
+    </div>
+    <div class="out">
+      <h2>To keep the doors open</h2>
+      <p class="big"><span data-out="monthly"></span> a month</p>
+      <p class="muted">After your expected revenue, you're spending <span data-out="burn"></span> a month more than you earn.</p>
+    </div>
+    <div class="out" data-verdict>
+      <h2>Runway</h2>
+      <p class="big" data-out="months"></p>
+      <p class="muted" data-out="verdict"></p>
+    </div>
+    <details>
+      <summary>Show the working</summary>
+      <div class="working">
+        <p>Left after setup = cash − one-time costs.</p>
+        <p>Monthly shortfall = monthly costs − expected revenue.</p>
+        <p>Runway = left after setup ÷ monthly shortfall.</p>
+      </div>
+    </details>
+  </Fragment>
+
+  <section class="explain">
+    <h2>What to do with this</h2>
+    <p>Aim for at least six months of runway before you sign anything long-term, and keep this money separate from your personal emergency fund. See <a href={url('guide/funding')}>Funding</a> and <a href={url('guide/gear')}>Gear</a>.</p>
+  </section>
+</Tool>
+
+<script>
+  import { runway } from '../../lib/calc.js';
+  import { money, hours } from '../../lib/toolform.js';
+
+  const root = document.querySelector<HTMLElement>('[data-tool="startup-budget"]')!;
+  const KEY = 'bs-tool-startup-budget';
+  const lists = {
+    oneTime: root.querySelector<HTMLUListElement>('[data-rows="oneTime"]')!,
+    monthly: root.querySelector<HTMLUListElement>('[data-rows="monthly"]')!,
+  };
+  const cash = root.querySelector<HTMLInputElement>('#cash')!;
+  const revenue = root.querySelector<HTMLInputElement>('#monthlyRevenue')!;
+  const template = { oneTime: lists.oneTime.innerHTML, monthly: lists.monthly.innerHTML, cash: cash.defaultValue, revenue: revenue.defaultValue };
+
+  const rowHtml = (name: string, amt: string | number) => {
+    const li = document.createElement('li');
+    li.className = 'row';
+    li.innerHTML = `<input class="row-name" type="text" aria-label="Item" /><span class="row-amt"><span aria-hidden="true">$</span><input type="number" inputmode="decimal" min="0" aria-label="Amount" /></span><button type="button" class="row-del" aria-label="Remove item">×</button>`;
+    (li.querySelector('.row-name') as HTMLInputElement).value = name;
+    (li.querySelector('input[type="number"]') as HTMLInputElement).value = String(amt);
+    return li;
+  };
+  const readRows = (ul: HTMLUListElement) =>
+    Array.from(ul.querySelectorAll('li')).map((li) => ({
+      name: (li.querySelector('.row-name') as HTMLInputElement).value,
+      amt: (li.querySelector('input[type="number"]') as HTMLInputElement).value,
+    }));
+  const set = (name: string, text: string) => root.querySelectorAll(`[data-out="${name}"]`).forEach((el) => (el.textContent = text));
+
+  function persist() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ oneTime: readRows(lists.oneTime), monthly: readRows(lists.monthly), cash: cash.value, revenue: revenue.value }));
+    } catch { /* ignore */ }
+  }
+
+  function calc() {
+    const r = runway({
+      oneTime: readRows(lists.oneTime).map((x) => Number(x.amt) || 0),
+      monthly: readRows(lists.monthly).map((x) => Number(x.amt) || 0),
+      cash: Number(cash.value) || 0,
+      monthlyRevenue: Number(revenue.value) || 0,
+    });
+    set('oneTime', money(r.oneTime));
+    set('left', money(r.left));
+    set('monthly', money(r.monthly));
+    set('burn', money(Math.max(r.burn, 0)));
+    let months = '', verdict = '';
+    if (r.months === 0) { months = 'Not enough cash'; verdict = 'Your one-time costs are more than your cash. Cut the setup list or rent time elsewhere first.'; }
+    else if (r.months === Infinity) { months = 'Covered'; verdict = 'Expected revenue covers your monthly costs. Make sure it comes from bookings you already have.'; }
+    else { months = `${hours(r.months, 1)} months`; verdict = r.months >= 6 ? 'A reasonable cushion while you build bookings.' : 'Under six months. Cut costs, pre-sell more hours, or keep your day job a little longer.'; }
+    set('months', months);
+    set('verdict', verdict);
+    const el = root.querySelector('[data-verdict]');
+    const ok = r.months === Infinity || (r.months !== null && r.months >= 6);
+    el?.classList.toggle('good', ok);
+    el?.classList.toggle('warn', !ok);
+    persist();
+  }
+
+  // Restore saved budget.
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved) {
+      (['oneTime', 'monthly'] as const).forEach((k) => {
+        lists[k].innerHTML = '';
+        saved[k].forEach((row: { name: string; amt: string }) => lists[k].appendChild(rowHtml(row.name, row.amt)));
+      });
+      cash.value = saved.cash;
+      revenue.value = saved.revenue;
+    }
+  } catch { /* ignore */ }
+
+  root.addEventListener('input', calc);
+  root.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.matches('.row-del')) { t.closest('li')?.remove(); calc(); }
+    const add = t.closest<HTMLElement>('[data-add]');
+    if (add) {
+      const ul = lists[add.dataset.add as 'oneTime' | 'monthly'];
+      const li = rowHtml('', 0);
+      ul.appendChild(li);
+      (li.querySelector('.row-name') as HTMLInputElement).focus();
+      calc();
+    }
+    if (t.matches('[data-reset]')) {
+      lists.oneTime.innerHTML = template.oneTime;
+      lists.monthly.innerHTML = template.monthly;
+      cash.value = template.cash;
+      revenue.value = template.revenue;
+      calc();
+    }
+  });
+  calc();
+</script>
+
+<style>
+  .rows { list-style: none; padding: 0; margin: 0 0 var(--space-3); }
+  :global(.row) {
+    display: grid;
+    grid-template-columns: 1fr 7rem 44px;
+    gap: var(--space-2);
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  :global(.row input) {
+    font: inherit;
+    color: var(--ink);
+    background: var(--sheet);
+    border: 1.5px solid var(--rule-strong);
+    border-radius: var(--radius-block);
+    min-height: 44px;
+    padding: 0 var(--space-2);
+    width: 100%;
+    min-width: 0;
+  }
+  :global(.row-amt) { display: flex; align-items: center; gap: 4px; color: var(--ink-2); font-weight: 700; }
+  :global(.row-amt input) { font-variant-numeric: tabular-nums; text-align: right; }
+  :global(.row-del) {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 1.5rem;
+    border-radius: var(--radius-block);
+    cursor: pointer;
+  }
+  :global(.row-del:hover) { color: var(--trap); background: var(--trap-bg); }
+  .add {
+    font: inherit;
+    font-weight: 700;
+    color: var(--booked);
+    background: transparent;
+    border: 1.5px dashed var(--booked);
+    border-radius: var(--radius-control);
+    min-height: 44px;
+    width: 100%;
+    cursor: pointer;
+  }
+  .explain { margin-top: var(--space-6); max-width: var(--measure); }
+  .explain h2 { font-size: var(--step-2); margin-top: 0; }
+</style>

@@ -1,0 +1,177 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getStages } from '../../lib/stages';
+import { url, toolTitle, smart } from '../../lib/url';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const stages = await getStages();
+  return stages.map((s, i) => ({
+    params: { slug: s.id },
+    props: { stage: s, prev: stages[i - 1] ?? null, next: stages[i + 1] ?? null, count: stages.length },
+  }));
+}
+
+const { stage, prev, next, count } = Astro.props;
+const { Content } = await render(stage.entry);
+const templates = await getCollection('templates');
+const templateTitle = (id: string) => templates.find((t) => t.id === id)?.data.title ?? id;
+---
+<Base title={stage.title} description={stage.summary} tab="guide">
+  <article class="wrap stage-page" data-stage-page={stage.id} data-total={stage.total}>
+    <p class="crumb small"><a href={url('')}>Guide</a> <span aria-hidden="true">/</span> Stage {stage.order} of {count}</p>
+    <h1>{stage.title}</h1>
+    <p class="lead">{smart(stage.summary)}</p>
+
+    <aside class="trap" aria-labelledby="trap-h">
+      <h2 id="trap-h">Biggest trap</h2>
+      <p>{smart(stage.trap)}</p>
+    </aside>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <p class="saved small muted no-print" data-saved>Ticks save on this device only. <a href={url('progress')}>See your progress</a></p>
+
+    <section class="moves" aria-labelledby="moves-h">
+      <h2 id="moves-h">Your next move</h2>
+      <ol>
+        {stage.nextMoves.map((m) => <li>{smart(m)}</li>)}
+      </ol>
+    </section>
+
+    {(stage.tools.length > 0 || stage.templates.length > 0) && (
+      <section class="related no-print" aria-labelledby="related-h">
+        <h2 id="related-h">Use with this stage</h2>
+        <ul>
+          {stage.tools.map((t) => <li><a href={url(`tools/${t}`)}>{toolTitle(t)}</a> <span class="muted small">calculator</span></li>)}
+          {stage.templates.map((t) => <li><a href={url(`templates/${t}`)}>{templateTitle(t)}</a> <span class="muted small">template</span></li>)}
+        </ul>
+      </section>
+    )}
+
+    <section class="sources" aria-labelledby="sources-h">
+      <h2 id="sources-h">Sources</h2>
+      <p class="small muted">Time-sensitive facts on this page were checked in {stage.checked}. Rules and programs change, so confirm with the source before you act.</p>
+      {stage.sources.length > 0 && (
+        <ul class="small">
+          {stage.sources.map((s) => <li><a href={s.url} rel="noopener">{s.title}</a></li>)}
+        </ul>
+      )}
+      <p class="small muted">Business frameworks are paraphrased from the books listed on the <a href={url('about')}>About page</a>. Worked numbers are estimates for illustration.</p>
+    </section>
+
+    <nav class="pager no-print" aria-label="Stages">
+      {prev ? <a href={url(`guide/${prev.id}`)} class="prev"><span class="small muted">Previous</span><span>{prev.order}. {prev.short}</span></a> : <span></span>}
+      {next ? <a href={url(`guide/${next.id}`)} class="next"><span class="small muted">Next</span><span>{next.order}. {next.short}</span></a> : <a href={url('progress')} class="next"><span class="small muted">Finished?</span><span>See your progress</span></a>}
+    </nav>
+  </article>
+</Base>
+
+<script>
+  import { load, save } from '../../lib/progress.js';
+
+  const page = document.querySelector<HTMLElement>('[data-stage-page]');
+  if (page) {
+    const stage = page.dataset.stagePage!;
+    const state = load();
+    const boxes = page.querySelectorAll<HTMLInputElement>('.prose li.task-list-item input[type="checkbox"]');
+    const heading = Array.from(page.querySelectorAll('.prose h2')).find((h) => /checklist/i.test(h.textContent || ''));
+    let status: HTMLElement | null = null;
+    if (heading) {
+      status = document.createElement('p');
+      status.className = 'small muted num';
+      status.setAttribute('aria-live', 'polite');
+      heading.insertAdjacentElement('afterend', status);
+    }
+    const update = () => {
+      const done = Array.from(boxes).filter((b) => b.checked).length;
+      if (status) status.textContent = done === boxes.length ? `All ${boxes.length} done. This stage is booked.` : `${done} of ${boxes.length} done`;
+    };
+
+    boxes.forEach((box, i) => {
+      const key = `${stage}:${i}`;
+      const li = box.closest('li')!;
+      box.disabled = false;
+      box.id = `check-${i}`;
+      box.checked = !!state[key];
+      // Wrap the item text in a label so the whole row is tappable.
+      const label = document.createElement('label');
+      label.htmlFor = box.id;
+      Array.from(li.childNodes).forEach((node) => { if (node !== box) label.appendChild(node); });
+      li.appendChild(label);
+      li.classList.toggle('done', box.checked);
+      box.addEventListener('change', () => {
+        const s = load();
+        if (box.checked) s[key] = true; else delete s[key];
+        save(s);
+        li.classList.toggle('done', box.checked);
+        update();
+        window.dispatchEvent(new Event('bs-progress'));
+      });
+    });
+    update();
+  }
+</script>
+
+<style>
+  .stage-page { padding-top: var(--space-5); }
+  .crumb { color: var(--ink-2); margin-bottom: var(--space-3); }
+  .crumb a { color: var(--ink-2); }
+  .lead { font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+
+  .trap {
+    margin: var(--space-5) 0 var(--space-6);
+    padding: var(--space-4);
+    background: var(--trap-bg);
+    border: 1px solid var(--trap-line);
+    border-left-width: 6px;
+    border-radius: var(--radius-block);
+  }
+  .trap h2 { font-size: var(--step-1); margin: 0 0 var(--space-2); color: var(--trap); }
+  .trap p { margin: 0; }
+
+  .moves {
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    background: var(--booked);
+    color: var(--booked-ink);
+    border-radius: var(--radius-control);
+  }
+  .moves h2 { margin: 0 0 var(--space-3); font-size: var(--step-2); }
+  .moves ol { margin: 0; padding-left: 1.25rem; }
+  .moves li { margin-bottom: var(--space-2); }
+  .moves li:last-child { margin-bottom: 0; }
+
+  .related h2, .sources h2 { font-size: var(--step-1); margin-top: var(--space-6); }
+  .related ul { padding-left: 1.25rem; }
+  .sources ul { padding-left: 1.25rem; }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .pager a {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-block);
+    background: var(--sheet);
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 700;
+    min-height: 48px;
+  }
+  .pager .next { text-align: right; }
+  .pager a:hover { border-color: var(--booked); }
+  .saved { margin-top: var(--space-3); }
+
+  @media print {
+    .trap, .moves { background: #fff; color: #000; border: 1px solid #000; }
+  }
+</style>

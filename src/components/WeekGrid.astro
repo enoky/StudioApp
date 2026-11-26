@@ -1,0 +1,160 @@
+---
+// The signature element: your progress as a week of studio sessions.
+// 12 stages = 6 days × day and night sessions. A finished stage is a booked block,
+// a started one is a pencilled-in hold, an untouched one is an open slot.
+import { url } from '../lib/url';
+
+interface Stage { id: string; order: number; short: string; total: number }
+interface Props { stages: Stage[]; compact?: boolean }
+const { stages, compact = false } = Astro.props;
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const sorted = [...stages].sort((a, b) => a.order - b.order);
+// Fill column by column: Mon day, Mon night, Tue day, ...
+// Desktop: one row of 6 days. Phones: two half-weeks stacked (Mon–Wed, then Thu–Sat).
+const place = (day: number, row: number) => {
+  const half = day >= 3 ? 1 : 0;
+  return `--dc:${day + 1};--dr:${row};--mc:${(day % 3) + 1};--mr:${row + half * 3}`;
+};
+const cells = sorted.map((s, i) => ({ ...s, style: place(Math.floor(i / 2), (i % 2) + 2) }));
+---
+<figure class:list={['week', { compact }]} data-week>
+  <figcaption class="week-head">
+    <span class="week-title">Your launch week</span>
+    <span class="week-count num" data-week-count>0 of {sorted.length} booked</span>
+  </figcaption>
+  <div class="grid" role="list">
+    {days.map((d, i) => <span class="day" style={place(i, 1)} aria-hidden="true">{d}</span>)}
+    {cells.map((c) => (
+      <a
+        role="listitem"
+        class="slot"
+        href={url(`guide/${c.id}`)}
+        style={c.style}
+        data-stage={c.id}
+        data-total={c.total}
+        aria-label={`Stage ${c.order}, ${c.short}: open`}
+      >
+        <span class="slot-n num">{c.order}</span>
+        <span class="slot-name">{c.short}</span>
+      </a>
+    ))}
+  </div>
+  <div class="legend small muted" aria-hidden="true">
+    <span><i class="key booked"></i>Done</span>
+    <span><i class="key hold"></i>Started</span>
+    <span><i class="key open"></i>Not started</span>
+  </div>
+</figure>
+
+<script>
+  import { load, countFor } from '../lib/progress.js';
+
+  function paint() {
+    const state = load();
+    document.querySelectorAll<HTMLElement>('[data-week]').forEach((week) => {
+      let booked = 0;
+      week.querySelectorAll<HTMLAnchorElement>('.slot').forEach((slot) => {
+        const total = Number(slot.dataset.total || 0);
+        const done = countFor(slot.dataset.stage || '', state);
+        const name = slot.querySelector('.slot-name')?.textContent || '';
+        const n = slot.querySelector('.slot-n')?.textContent || '';
+        let status = 'open';
+        if (total > 0 && done >= total) { status = 'booked'; booked++; }
+        else if (done > 0) status = 'hold';
+        slot.dataset.status = status;
+        const words = { booked: 'done', hold: `started, ${done} of ${total} ticked`, open: 'not started' }[status];
+        slot.setAttribute('aria-label', `Stage ${n}, ${name}: ${words}`);
+      });
+      const count = week.querySelector('[data-week-count]');
+      const total = week.querySelectorAll('.slot').length;
+      if (count) count.textContent = booked === total ? 'Booked solid' : `${booked} of ${total} booked`;
+    });
+  }
+  paint();
+  window.addEventListener('bs-progress', paint);
+  window.addEventListener('pageshow', paint);
+</script>
+
+<style>
+  .week {
+    margin: 0;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-control);
+    padding: var(--space-4);
+  }
+  .week-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .week-title { font-family: var(--font-display); font-stretch: 85%; font-weight: 700; font-size: var(--step-1); }
+  .week-count { color: var(--ink-2); font-weight: 700; font-size: var(--step--1); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto 4rem 4rem auto 4rem 4rem;
+    gap: 6px;
+  }
+  .grid > * { grid-column: var(--mc); grid-row: var(--mr); }
+  .day { padding-top: 4px; }
+  .day {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink-2);
+    text-align: center;
+    padding-bottom: 4px;
+  }
+  .slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px;
+    border-radius: var(--radius-block);
+    border: 1.5px dashed var(--rule-strong);
+    background: var(--sheet);
+    color: var(--ink-2);
+    text-decoration: none;
+    min-width: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  .slot-n { font-weight: 700; font-size: 0.95rem; line-height: 1; }
+  .slot-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .slot[data-status='hold'] {
+    border: 1.5px solid var(--hold-line);
+    color: var(--ink);
+    background: repeating-linear-gradient(135deg, var(--hold) 0 4px, transparent 4px 12px), var(--sheet);
+  }
+  .slot[data-status='booked'] {
+    border: 1.5px solid var(--booked);
+    background: var(--booked);
+    color: var(--booked-ink);
+  }
+  .slot:hover { border-color: var(--booked); }
+
+  .legend { display: flex; gap: var(--space-4); margin-top: var(--space-3); flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .key { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .key.booked { background: var(--booked); }
+  .key.hold { border: 1.5px solid var(--hold-line); background: repeating-linear-gradient(135deg, var(--hold) 0 3px, transparent 3px 6px); }
+  .key.open { border: 1.5px dashed var(--rule-strong); }
+
+  @media (min-width: 34rem) {
+    .grid { grid-template-columns: repeat(6, 1fr); grid-template-rows: auto 5rem 5rem; gap: 8px; }
+    .grid > * { grid-column: var(--dc); grid-row: var(--dr); }
+    .slot { padding: 8px; }
+    .slot-name { font-size: 0.8rem; }
+  }
+  .compact .legend { display: none; }
+</style>

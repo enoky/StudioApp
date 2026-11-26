@@ -1,0 +1,91 @@
+---
+import Tool from '../../layouts/Tool.astro';
+import Field from '../../components/Field.astro';
+import { url } from '../../lib/url';
+---
+<Tool slug="break-even" title="Break-even and lease test" description="How many hours you must book each week to cover your costs, pay yourself, and pass the Profit First lease test.">
+  <Fragment slot="inputs">
+    <fieldset>
+      <legend>Monthly costs</legend>
+      <Field id="rent" label="Rent" value={2500} prefix="$" step={50} hint="Monthly rent for the space. Use 0 for a home studio." />
+      <Field id="otherFixed" label="Other fixed costs" value={1500} prefix="$" step={50} hint="Utilities, insurance, software, internet, maintenance, marketing." />
+    </fieldset>
+    <fieldset>
+      <legend>Your rate and hours</legend>
+      <Field id="rate" label="Effective hourly rate" value={60} prefix="$" hint="What you actually earn per booked hour after discounts and freebies, not your rate card." />
+      <Field id="ownerPay" label="Monthly pay you want" value={4000} prefix="$" step={100} />
+      <Field id="availableHours" label="Bookable hours per week" value={60} suffix="h" hint="Hours the room could realistically be open for sessions." />
+      <Field id="realisticHours" label="Hours you honestly expect to book per week" value={25} suffix="h" hint="Base this on deposits and repeat clients, not hopes." />
+      <Field id="opexShare" label="Share of revenue the studio may spend on overhead" value={30} suffix="%" max={100} hint="Profit First's target for a new studio is about 30%." />
+    </fieldset>
+  </Fragment>
+
+  <Fragment slot="results">
+    <div class="out">
+      <h2>Just to cover your costs</h2>
+      <p class="big"><span data-out="coverWeek"></span> h/week</p>
+      <p class="muted"><span data-out="coverMonth"></span> booked hours a month, about <span data-out="coverUtil"></span> of your bookable hours. You earn nothing at this level.</p>
+    </div>
+    <div class="out">
+      <h2>To cover costs and pay yourself</h2>
+      <p class="big"><span data-out="payWeek"></span> h/week</p>
+      <p class="muted"><span data-out="payMonth"></span> hours a month, about <span data-out="payUtil"></span> utilization.</p>
+    </div>
+    <div class="out">
+      <h2>Profit First lease test</h2>
+      <p class="big"><span data-out="pfWeek"></span> h/week</p>
+      <p class="muted">You'd need <span data-out="pfRevenue"></span> a month in real revenue (<span data-out="pfMonth"></span> hours) to keep overhead at <span data-out="opex"></span>. That also funds your pay, tax and profit.</p>
+    </div>
+    <div class="out" data-verdict>
+      <h2 data-out="verdictTitle"></h2>
+      <p>At <span data-out="realHours"></span> h/week you'd bring in about <span data-out="realRevenue"></span> a month, so your overhead ceiling is <span data-out="ceiling"></span> a month, all in. Your overhead is <span data-out="overhead"></span>.</p>
+    </div>
+    <details>
+      <summary>Show the working</summary>
+      <div class="working">
+        <p>Overhead = rent + other fixed costs.</p>
+        <p>Hours to cover = overhead ÷ effective rate. Weekly figures use 4.33 weeks a month.</p>
+        <p>Profit First revenue needed = overhead ÷ overhead share. Hours = that revenue ÷ rate.</p>
+        <p>Overhead ceiling = realistic hours a week × rate × 4.33 × overhead share.</p>
+        <p>Utilization = booked hours ÷ bookable hours.</p>
+      </div>
+    </details>
+  </Fragment>
+
+  <section class="explain">
+    <h2>What to do with this</h2>
+    <p>If the verdict says the space fails, you don't need a better room. You need more pre-sold hours, a higher effective rate or a cheaper space. Read <a href={url('guide/money')}>Money</a> and <a href={url('guide/space')}>Space</a> before you sign anything.</p>
+  </section>
+</Tool>
+
+<script>
+  import { breakEven } from '../../lib/calc.js';
+  import { bindTool, set, money, hours, pct } from '../../lib/toolform.js';
+
+  bindTool('break-even', (v, root) => {
+    const r = breakEven({ ...v, opexShare: v.opexShare / 100 });
+    set(root, 'coverWeek', hours(r.cover?.week ?? NaN));
+    set(root, 'coverMonth', hours(r.cover?.month ?? NaN));
+    set(root, 'coverUtil', pct(r.cover?.utilization ?? null));
+    set(root, 'payWeek', hours(r.withPay?.week ?? NaN));
+    set(root, 'payMonth', hours(r.withPay?.month ?? NaN));
+    set(root, 'payUtil', pct(r.withPay?.utilization ?? null));
+    set(root, 'pfWeek', hours(r.profitFirst?.week ?? NaN));
+    set(root, 'pfMonth', hours(r.profitFirst?.month ?? NaN));
+    set(root, 'pfRevenue', money(r.profitFirst?.revenue ?? NaN));
+    set(root, 'opex', `${v.opexShare}% of revenue`);
+    set(root, 'realHours', hours(v.realisticHours));
+    set(root, 'realRevenue', money(r.realisticRevenue));
+    set(root, 'ceiling', money(r.overheadCeiling));
+    set(root, 'overhead', money(r.overhead));
+    set(root, 'verdictTitle', r.leasePasses ? 'This space passes the lease test' : 'This space fails the lease test for now');
+    const verdict = root.querySelector('[data-verdict]');
+    verdict?.classList.toggle('good', r.leasePasses);
+    verdict?.classList.toggle('warn', !r.leasePasses);
+  });
+</script>
+
+<style>
+  .explain { margin-top: var(--space-6); max-width: var(--measure); }
+  .explain h2 { font-size: var(--step-2); margin-top: 0; }
+</style>

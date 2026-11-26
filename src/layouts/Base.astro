@@ -1,0 +1,198 @@
+---
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource/atkinson-hyperlegible/400.css';
+import '@fontsource/atkinson-hyperlegible/700.css';
+import '@fontsource/atkinson-hyperlegible/400-italic.css';
+import '../styles/global.css';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description?: string;
+  tab?: 'guide' | 'tools' | 'templates' | 'progress' | 'search' | 'none';
+}
+const { title, description = 'A free, practical guide to launching a recording or podcast studio in Ontario.', tab = 'none' } = Astro.props;
+const fullTitle = title === 'Booked Solid' ? 'Booked Solid: launch a recording or podcast studio in Ontario' : `${title} | Booked Solid`;
+
+const tabs = [
+  { id: 'guide', label: 'Guide', href: url(''), icon: 'M4 5h16v15H4zM4 9h16M9 3v4M15 3v4M7 12.5h4v3H7z' },
+  { id: 'tools', label: 'Tools', href: url('tools'), icon: 'M5 3h14v18H5zM8 6h8v3H8zM8 12h2M12 12h2M16 12h0M8 15h2M12 15h2M8 18h2M12 18h2M16 15v3' },
+  { id: 'templates', label: 'Paperwork', href: url('templates'), icon: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 15h7M9 18h4' },
+  { id: 'progress', label: 'Progress', href: url('progress'), icon: 'M4 12l5 5L20 6' },
+  { id: 'search', label: 'Search', href: url('search'), icon: 'M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM15.5 15.5L20 20' },
+] as const;
+---
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#12151d" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href={url('manifest.webmanifest')} />
+    <link rel="icon" href={url('icons/icon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('icons/apple-touch-icon.png')} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Booked Solid" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <script is:inline>
+      // Apply the saved or system theme before first paint.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('bs-theme'); } catch (e) {}
+        if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a class="wordmark" href={url('')} aria-label="Booked Solid home">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="8" width="5" height="4" rx="1" fill="var(--booked)"/><rect x="13" y="8" width="5" height="4" rx="1" fill="var(--booked)"/><rect x="6" y="14" width="5" height="4" rx="1" fill="var(--booked)"/><rect x="13" y="14" width="5" height="4" rx="1" fill="var(--booked)"/></svg>
+          <span>Booked Solid</span>
+        </a>
+        <button class="theme-toggle" type="button" aria-label="Switch between light and dark mode">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer wrap no-print">
+      <p class="small muted">
+        Booked Solid is a free general guide, not legal, tax or financial advice. Rules, rates and programs change, so check the linked official sources and talk to an Ontario lawyer or accountant before you sign or file anything.
+        <a href={url('about')}>About this guide</a>
+      </p>
+    </footer>
+
+    <nav class="tabbar" aria-label="Main">
+      <ul>
+        {tabs.map((t) => (
+          <li>
+            <a href={t.href} aria-current={tab === t.id ? 'page' : undefined}>
+              <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d={t.icon} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>{t.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <script>
+      const btn = document.querySelector('.theme-toggle');
+      btn?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try { localStorage.setItem('bs-theme', next); } catch { /* ignore */ }
+      });
+
+      if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/sw.js`).catch(() => {});
+        });
+      }
+    </script>
+
+    <style>
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: color-mix(in srgb, var(--paper) 92%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--rule);
+      }
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 3.25rem;
+      }
+      .wordmark {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        color: var(--ink);
+        text-decoration: none;
+        font-family: var(--font-display);
+        font-stretch: 80%;
+        font-weight: 760;
+        font-size: 1.25rem;
+        letter-spacing: -0.01em;
+        min-height: 44px;
+      }
+      .theme-toggle {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border: 0;
+        background: transparent;
+        color: var(--ink-2);
+        border-radius: var(--radius-control);
+        cursor: pointer;
+      }
+      .theme-toggle:hover { color: var(--ink); background: var(--sheet); }
+
+      .site-footer { padding-top: var(--space-7); padding-bottom: var(--space-6); }
+
+      .tabbar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 30;
+        background: var(--sheet);
+        border-top: 1px solid var(--rule);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .tabbar ul {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        list-style: none;
+        margin: 0 auto;
+        padding: 0;
+        max-width: 40rem;
+        height: var(--nav-h);
+      }
+      .tabbar a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        height: 100%;
+        color: var(--ink-2);
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .tabbar a[aria-current='page'] { color: var(--booked); }
+      .tabbar a[aria-current='page'] svg { stroke-width: 2.4; }
+
+      @media (min-width: 64rem) {
+        body { padding-bottom: 0; padding-left: 6rem; }
+        .tabbar {
+          top: 0;
+          right: auto;
+          width: 6rem;
+          border-top: 0;
+          border-right: 1px solid var(--rule);
+          padding-top: 4rem;
+        }
+        .tabbar ul { grid-template-columns: 1fr; grid-auto-rows: 5rem; height: auto; }
+        .topbar { margin-left: 0; }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const templates = await getCollection('templates');
+  return templates.map((t) => ({ params: { slug: t.id }, props: { t } }));
+}
+const { t } = Astro.props;
+const { Content } = await render(t);
+---
+<Base title={t.data.title} description={t.data.summary} tab="templates">
+  <article class="wrap doc">
+    <p class="crumb small no-print"><a href={url('templates')}>Paperwork</a></p>
+    <h1>{t.data.title}</h1>
+    <p class="lead no-print">{t.data.summary}</p>
+    <div class="actions no-print">
+      <button type="button" class="btn" data-print>Print or save as PDF</button>
+      <button type="button" class="btn ghost" data-copy>Copy as text</button>
+      <span class="small muted" data-copied aria-live="polite"></span>
+    </div>
+    <div class="prose sheet" data-sheet>
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<script>
+  document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+  document.querySelector('[data-copy]')?.addEventListener('click', async () => {
+    const sheet = document.querySelector<HTMLElement>('[data-sheet]');
+    const msg = document.querySelector('[data-copied]');
+    if (!sheet) return;
+    try {
+      await navigator.clipboard.writeText(sheet.innerText);
+      if (msg) msg.textContent = 'Copied. Paste it into your own document to edit.';
+    } catch {
+      if (msg) msg.textContent = "Copying isn't available here. Select the text and copy it instead.";
+    }
+  });
+</script>
+
+<style>
+  .doc { padding-top: var(--space-5); }
+  .crumb a { color: var(--ink-2); }
+  .lead { font-size: var(--step-1); color: var(--ink-2); line-height: 1.5; }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin: var(--space-4) 0 var(--space-5); }
+  .sheet {
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-control);
+    padding: var(--space-5);
+  }
+  .sheet :global(h2) { font-size: var(--step-1); margin-top: var(--space-5); }
+  .sheet :global(td) { height: 2.5rem; }
+  @media print {
+    .doc { max-width: none; padding: 0; }
+    .sheet { border: 0; padding: 0; }
+    .sheet :global(table) { display: table; font-size: 10pt; }
+    .sheet :global(th), .sheet :global(td) { border: 1px solid #000; }
+    .sheet :global(blockquote) { background: none; border-left: 2px solid #000; }
+  }
+</style>
